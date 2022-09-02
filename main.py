@@ -22,13 +22,8 @@ def word():
                     print('Это слово начинаеться с другой буквы!')
                     slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
             while slovo in word_list:
-                if slovo in word_list:
-                    print('Это слово уже использовалось, введите другое: \n')
-                    slovo = input(f'{i}, введите слово: \n').lower()
-                else:
-                    word_list.append(slovo)
-                    break
-
+                print('Это слово уже использовалось, введите другое: \n')
+                slovo = input(f'{i}, введите слово: \n').lower()
             word_list.append(slovo)
             if slovo == 'exit':
                 print('Спасибо за игру.')

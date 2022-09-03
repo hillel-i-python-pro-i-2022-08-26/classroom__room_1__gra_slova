@@ -27,7 +27,9 @@ def word():
                     exit()
                 else:
                     while True:
-                        if not slovo.startswith(last_word[-1]):
+                        if slovo == 'stop':
+                            exit()
+                        elif not slovo.startswith(last_word[-1]):
                             print('Это слово начинаеться с другой буквы!')
                             slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
                         elif slovo in word_list:
@@ -36,6 +38,7 @@ def word():
                         else:
                             word_list.append(slovo)
                             break
+
 
 player_name()
 print('Игра началась! Чтобы закончить игру введите "stop".')

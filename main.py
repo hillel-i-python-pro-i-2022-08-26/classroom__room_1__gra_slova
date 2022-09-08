@@ -7,32 +7,23 @@ ua = UserAgent()
 headers = {"User-Agent": ua.random}
 
 
-def rus_dict_parse():
-    page_number = 1
-    for letter in "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЭЮЯ":
-        url = f"https://ozhegov.slovaronline.com/articles/{letter}/page-{page_number}"
-        response = requests.get(url, headers=headers)
-        soup = Bs(response.text, "lxml")
-        data = soup.find_all("div", class_="col-lg-4 col-md-6 col-sm-12 article-link")
+def search_word(inp_word):
+    url = f"https://ru.wikipedia.org/w/index.php?search={inp_word}&" \
+          f"title=%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:" \
+          f"%D0%9F%D0%BE%D0%B8%D1%81%D0%BA&profile=advanced&fulltext=1&ns0=1 "
+    response = requests.get(url, headers=headers)
+    soup = Bs(response.text, "lxml")
+    try:
+        data = soup.find("ul", class_="mw-search-results")
         if len(data) != 0:
-            page_number += 1
-        else:
-            page_number = 1
-            continue
-        if len(data) != 0:
-            for words in data:
-                dict_word = words.find("a").text.strip(".?").lower()
-                dictionary.append(dict_word)
-        else:
-            break
+            exists_word = data.find("span", class_="searchmatch").text.lower()
+            return True
+    except TypeError:
+        return False
 
-
-print("Начните игру после появления приветствия на экране")
 name_list = []
 word_list = []
 res = {}
-dictionary = []
-rus_dict_parse()
 print('Вас приветсвует игра в слова.')
 print('Для начала введите имя игрока. Введите "start" для начала игры.')
 
@@ -46,12 +37,13 @@ def player_name():
         res.setdefault(name.title(), 0)
 
 
+
 def word():
     while True:
         for i in name_list:
             if len(word_list) == 0:
                 slovo = input(f'{i}, введите слово: \n').lower()
-                while slovo not in dictionary:
+                while not search_word(slovo):
                     print("Такого слова не существует!")
                     slovo = input(f'{i}, введите слово: \n').lower()
                 word_list.append(slovo)
@@ -59,7 +51,7 @@ def word():
             else:
                 last_word = str(word_list[-1])
                 slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
-                while slovo not in dictionary:
+                while not search_word(slovo):
                     print("Такого слова не существует!")
                     slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
                     if slovo == 'stop':
@@ -88,7 +80,7 @@ def word():
                         elif slovo in word_list:
                             print('Это слово уже использовалось, введите другое: \n')
                             slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
-                        elif slovo not in dictionary:
+                        elif not search_word(slovo):
                             print("Такого слова не существует!")
                             slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
                         else:

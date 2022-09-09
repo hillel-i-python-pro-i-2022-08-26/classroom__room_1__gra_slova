@@ -16,10 +16,10 @@ def search_word(inp_word):
     try:
         data = soup.find("ul", class_="mw-search-results")
         if len(data) != 0:
-            exists_word = data.find("span", class_="searchmatch").text.lower()
             return True
     except TypeError:
         return False
+
 
 name_list = []
 word_list = []
@@ -37,7 +37,6 @@ def player_name():
         res.setdefault(name.title(), 0)
 
 
-
 def word():
     while True:
         for i in name_list:
@@ -50,10 +49,11 @@ def word():
                 res[i] += 1
             else:
                 last_word = str(word_list[-1])
-                slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
+                last_letter = last_word[-2] if last_word.endswith(("ь", "ы", "ъ")) else last_word[-1]
+                slovo = input(f'{i}, введите слово на букву "{last_letter}": \n').lower()
                 while not search_word(slovo):
                     print("Такого слова не существует!")
-                    slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
+                    slovo = input(f'{i}, введите слово на букву "{last_letter}": \n').lower()
                     if slovo == 'stop':
                         for key, value in res.items():
                             print(f'{key}, ввел {value} слов!')
@@ -74,15 +74,15 @@ def word():
                             print('***********************')
                             print(f'Всего введено слов: {len(word_list)}')
                             exit()
-                        elif not slovo.startswith(last_word[-1]):
+                        elif not slovo.startswith(last_letter[-1]):
                             print('Это слово начинаеться с другой буквы!')
-                            slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
+                            slovo = input(f'{i}, введите слово на букву "{last_letter}": \n').lower()
                         elif slovo in word_list:
                             print('Это слово уже использовалось, введите другое: \n')
-                            slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
+                            slovo = input(f'{i}, введите слово на букву "{last_letter}": \n').lower()
                         elif not search_word(slovo):
                             print("Такого слова не существует!")
-                            slovo = input(f'{i}, введите слово на букву "{last_word[-1]}": \n').lower()
+                            slovo = input(f'{i}, введите слово на букву "{last_letter}": \n').lower()
                         else:
                             word_list.append(slovo)
                             res[i] += 1
